@@ -144,10 +144,11 @@ public class AccountReplayTest {
     void neverOpened() {
         Account account = new Account();
         account.apply(new Event("e1", "acc-0232", 1, "2026-01-01T00:00:00Z", "Credited", null, null, "100.00", null, null));
+        account.apply(new Event("e2", "acc-0232", 2, "2026-01-01T00:00:00Z", "Credited", null, null, "50.00", null, null));
 
         Assertions.assertFalse(account.isOpened());
         Assertions.assertTrue(account.needsReview());
-        Assertions.assertTrue(account.getReviewReasons().contains("credited before account was opened"));
+        Assertions.assertEquals(List.of("credited before account was opened"), account.getReviewReasons());
     }
 
     @Test

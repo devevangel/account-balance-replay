@@ -79,7 +79,9 @@ public class Account {
 
     private void flag(String reason) {
         needsReview = true;
-        reviewReasons.add(reason);
+        if (!reviewReasons.contains(reason)) {
+            reviewReasons.add(reason);
+        }
     }
 
     private static BigDecimal toPennies(BigDecimal value) {
