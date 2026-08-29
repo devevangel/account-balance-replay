@@ -2,9 +2,6 @@ package org.example;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
 import java.math.RoundingMode;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -15,12 +12,8 @@ import java.util.*;
 
 public class Main {
     public static void main(String[] args) throws Exception {
-       PrintWriter stderr = unixWriter(System.err);
-       PrintWriter stdout = unixWriter(System.out);
-
        if (args.length == 0) {
-           stderr.print("Usage: supply the path to the event file\n");
-           stderr.flush();
+           System.err.print("Usage: supply the path to the event file\n");
            System.exit(1);
        }
 
@@ -46,9 +39,8 @@ public class Main {
            eventsByAccount.get(id).add(event);
        }
 
-       // Loop through each account's
-       // Order each account's event by sequence
-       //
+       // Sort each account's events by seq, replay them, then keep opened
+       // accounts for the result list and flagged accounts for REVIEW.
        for (List<Event> events : eventsByAccount.values()){
            events.sort((a, b) -> Integer.compare(a.seq(), b.seq()));
 
@@ -65,9 +57,22 @@ public class Main {
            openedAccounts.add(account);
        }
 
+       // Flagged: sort by accountId. Opened: surname, then firstName, then accountId.
         flaggedAccounts.sort((a, b) -> a.getAccountId().compareTo(b.getAccountId()));
+        openedAccounts.sort((a, b) -> {
+            int bySurname = a.getSurname().compareTo(b.getSurname());
+            if (bySurname != 0) {
+                return bySurname;
+            }
+            int byFirstName = a.getFirstName().compareTo(b.getFirstName());
+            if (byFirstName != 0) {
+                return byFirstName;
+            }
+            return a.getAccountId().compareTo(b.getAccountId());
+        });
+
         for (Account account : flaggedAccounts) {
-            stderr.print(
+            System.err.print(
                     "REVIEW "
                             + account.getAccountId()
                             + " "
@@ -75,38 +80,16 @@ public class Main {
                             + "\n"
             );
         }
-        stderr.flush();
-
-        openedAccounts.sort((a, b) -> {
-            int bySurname = name(a.getSurname()).compareTo(name(b.getSurname()));
-            if (bySurname != 0) {
-                return bySurname;
-            }
-            int byFirstName = name(a.getFirstName()).compareTo(name(b.getFirstName()));
-            if (byFirstName != 0) {
-                return byFirstName;
-            }
-            return a.getAccountId().compareTo(b.getAccountId());
-        });
 
         for (Account account : openedAccounts) {
-            stdout.print(
-                    name(account.getSurname())
+            System.out.print(
+                    account.getSurname()
                             + " "
-                            + name(account.getFirstName())
+                            + account.getFirstName()
                             + " "
                             + account.getBalance().setScale(2, RoundingMode.UNNECESSARY)
                             + "\n"
             );
         }
-        stdout.flush();
-    }
-
-    private static PrintWriter unixWriter(OutputStream stream) {
-        return new PrintWriter(new OutputStreamWriter(stream, StandardCharsets.UTF_8), false);
-    }
-
-    private static String name(String value) {
-        return value == null ? "" : value;
     }
 }
