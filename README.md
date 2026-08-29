@@ -26,7 +26,7 @@ chmod +x run.sh
 ./run.sh /path/to/events.json
 ```
 
-**Stdout** is balance lines only. Flagged accounts appear on **stderr** as `REVIEW <accountId> <reasons>`. If you omit the path, the program exits with code 1.
+The main output is the balance lines only. Accounts that need a check print separately as `REVIEW <accountId> <reasons>`. If you do not provide the path, it prints a usage message and stops.
 
 ## Tests
 
