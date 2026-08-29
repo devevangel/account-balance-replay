@@ -2,6 +2,7 @@ package org.example;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import java.io.PrintStream;
 import java.math.RoundingMode;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -12,8 +13,12 @@ import java.util.*;
 
 public class Main {
     public static void main(String[] args) throws Exception {
+       // Always write UTF-8.
+       PrintStream out = new PrintStream(System.out, false, StandardCharsets.UTF_8);
+       PrintStream err = new PrintStream(System.err, false, StandardCharsets.UTF_8);
+
        if (args.length == 0) {
-           System.err.println("Usage: supply the path to the event file");
+           err.print("Usage: supply the path to the event file\n");
            System.exit(1);
        }
 
@@ -72,22 +77,26 @@ public class Main {
         });
 
         for (Account account : flaggedAccounts) {
-            System.err.println(
+            err.print(
                     "REVIEW "
                             + account.getAccountId()
                             + " "
                             + String.join("; ", account.getReviewReasons())
+                            + "\n"
             );
         }
 
         for (Account account : openedAccounts) {
-            System.out.println(
+            out.print(
                     account.getSurname()
                             + " "
                             + account.getFirstName()
                             + " "
                             + account.getBalance().setScale(2, RoundingMode.UNNECESSARY)
+                            + "\n"
             );
         }
+        out.flush();
+        err.flush();
     }
 }
