@@ -22,7 +22,6 @@ cd account-balance-replay
 From the repo root, pass the path to the JSON file that contains the event logs:
 
 ```bash
-chmod +x run.sh
 ./run.sh /path/to/events.json
 ```
 
