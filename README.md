@@ -26,15 +26,15 @@ chmod +x run.sh
 ./run.sh /path/to/events.json
 ```
 
-The sample file is not in this repo. `run.sh` builds a shaded jar, then runs `java -jar target/account-balance-replay.jar` with that path.
-
-**Stdout** is one line per opened account. Flagged accounts are also listed first on **stderr** as `REVIEW <accountId> <reasons>`. If you omit the path, the program exits with code 1.
+**Stdout** is balance lines only. Flagged accounts appear on **stderr** as `REVIEW <accountId> <reasons>`. If you omit the path, the program exits with code 1.
 
 ## Tests
 
 ```bash
 mvn test
 ```
+
+Thirteen tests covering: the five-event spec example, banker's rounding in both directions, interest on zero, negative balance, reverse of credit, reverse of interest, sort order by surname/firstName/accountId, same-name tiebreak, unopened account skipped, missing reversal target, missing name flagged, and two decimal places on output.
 
 ## Assumptions and decisions
 
