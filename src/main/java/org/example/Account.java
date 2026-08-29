@@ -27,14 +27,14 @@ public class Account {
         switch (type) {
             case "AccountOpened" -> {
                 accountId = event.accountId();
-                firstName = event.firstName();
-                surname = event.surname();
+                firstName = event.firstName() != null ? event.firstName() : "";
+                surname = event.surname() != null ? event.surname() : "";
                 balance = new BigDecimal("0.00");
                 opened = true;
-                if (firstName == null || firstName.isBlank()) {
+                if (firstName.isBlank()) {
                     flag("missing first name");
                 }
-                if (surname == null || surname.isBlank()) {
+                if (surname.isBlank()) {
                     flag("missing surname");
                 }
             }
