@@ -13,7 +13,7 @@ import java.util.*;
 public class Main {
     public static void main(String[] args) throws Exception {
        if (args.length == 0) {
-           System.err.print("Usage: supply the path to the event file\n");
+           System.err.println("Usage: supply the path to the event file");
            System.exit(1);
        }
 
@@ -72,23 +72,21 @@ public class Main {
         });
 
         for (Account account : flaggedAccounts) {
-            System.err.print(
+            System.err.println(
                     "REVIEW "
                             + account.getAccountId()
                             + " "
                             + String.join("; ", account.getReviewReasons())
-                            + "\n"
             );
         }
 
         for (Account account : openedAccounts) {
-            System.out.print(
+            System.out.println(
                     account.getSurname()
                             + " "
                             + account.getFirstName()
                             + " "
                             + account.getBalance().setScale(2, RoundingMode.UNNECESSARY)
-                            + "\n"
             );
         }
     }
