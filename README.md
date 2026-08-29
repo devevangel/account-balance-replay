@@ -28,7 +28,7 @@ chmod +x run.sh
 
 The sample file is not in this repo. `run.sh` builds a shaded jar, then runs `java -jar target/account-balance-replay.jar` with that path.
 
-**Stdout** is result lines only. Usage errors go to **stderr**. If you omit the path, the program exits with code 1.
+**Stdout** is one line per opened account. Flagged accounts are also listed first on **stderr** as `REVIEW <accountId> <reasons>`. If you omit the path, the program exits with code 1.
 
 ## Tests
 
@@ -41,6 +41,5 @@ mvn test
 - Replay is `seq` per `accountId`, not file order. The file interleaves accounts in time order; the brief defines history by `seq`, so grouping then sorting is the only way to apply events in the right sequence.
 - Money is `BigDecimal` with `setScale(2, HALF_EVEN)`, not `double`. Binary floats cannot store tenths exactly, so penny rounding would be applied to noise. `HALF_EVEN` is the tie rule in the brief (`1.005 → 1.00`, `1.015 → 1.02`).
 - A reverse subtracts the **posted** amount stored when that event was applied. The brief says reversing interest undoes the pennies that were actually posted, not `currentBalance × rate` again.
-- Only accounts with `AccountOpened` are printed. The brief says that, and the sample file has two ids with money events but no open. Those have no name to print, so they are skipped.
-- A reverse whose `targetEventId` is missing is skipped. One line in the sample file points at an event that does not exist. Failing the whole run on that would be stricter than the brief, which only describes reversing a posted event.
+- Every opened account is still printed on stdout. Dirty rows (missing name, money before open, reverse of a missing event) are also flagged on stderr as `REVIEW <accountId> <reasons>` so a person can check them. We do not guess a “fixed” history.
 - Output is `surname firstName balance`, two decimal places, sorted by surname, then firstName, then accountId with `String.compareTo`, as specified.

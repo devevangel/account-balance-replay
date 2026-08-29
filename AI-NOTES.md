@@ -2,7 +2,7 @@
 
 ## What I asked it to do
 
-- Read the assignment and `test_data.json`, then explain the problem in simple terms.
+- Review my written notes on my understanding of the assignment against the brief and `test_data.json`, point out gaps, and help clarify any terms I flagged as needing more explanation.
 - Once I had an approach, break the work into small phases I could glance at and know what to build next.
 - Break down my research on handling money in Java: why we keep amounts in precise decimal units with `BigDecimal` and `setScale`, and why `double` is the wrong type for cash.
 - Review the tests I planned and flag any important cases I had missed.

@@ -23,6 +23,8 @@ public class AccountReplayTest {
         account.apply(new Event("e5", "a1", 5, "2026-01-01T00:00:00Z", "Reversed", null, null, null, null, "e3"));
 
         Assertions.assertEquals(new BigDecimal("1505.47"), account.getBalance());
+        Assertions.assertFalse(account.needsReview());
+        Assertions.assertTrue(account.getReviewReasons().isEmpty());
 
     }
 
@@ -144,6 +146,8 @@ public class AccountReplayTest {
         account.apply(new Event("e1", "acc-0232", 1, "2026-01-01T00:00:00Z", "Credited", null, null, "100.00", null, null));
 
         Assertions.assertFalse(account.isOpened());
+        Assertions.assertTrue(account.needsReview());
+        Assertions.assertTrue(account.getReviewReasons().contains("credited before account was opened"));
     }
 
     @Test
@@ -156,6 +160,20 @@ public class AccountReplayTest {
 
         Assertions.assertTrue(account.isOpened());
         Assertions.assertEquals(new BigDecimal("100.00"), account.getBalance());
+        Assertions.assertTrue(account.needsReview());
+        Assertions.assertTrue(account.getReviewReasons().contains("reverse target e-missing does not exist"));
+    }
+
+    @Test
+    @DisplayName("A missing first name or surname is flagged for review")
+    void missingNameIsFlagged() {
+        Account account = new Account();
+        account.apply(new Event("e1", "a1", 1, "2026-01-01T00:00:00Z", "AccountOpened", null, "", null, null, null));
+
+        Assertions.assertTrue(account.isOpened());
+        Assertions.assertTrue(account.needsReview());
+        Assertions.assertTrue(account.getReviewReasons().contains("missing first name"));
+        Assertions.assertTrue(account.getReviewReasons().contains("missing surname"));
     }
 
     @Test
